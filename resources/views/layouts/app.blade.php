@@ -15,9 +15,9 @@
         <div class="app-body">
             <x-layout.top-navbar />
 
-            <main class="app-main">
+            <x-layout.main-content>
                 @yield('content')
-            </main>
+            </x-layout.main-content>
         </div>
     </div>
 </body>

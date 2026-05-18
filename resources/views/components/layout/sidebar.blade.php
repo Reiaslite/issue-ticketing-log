@@ -32,6 +32,6 @@
 
     <div class="sidebar-footer">
         <p class="mb-1 fw-semibold">Need attention</p>
-        <p class="mb-0 text-muted">Placeholder area for ticket alerts.</p>
+        <p class="sidebar-footer-text mb-0">Placeholder area for ticket alerts.</p>
     </div>
 </aside>
