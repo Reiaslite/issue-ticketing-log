@@ -1,12 +1,409 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
-@import 'tailwindcss';
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+:root {
+    --app-bg: #f4f7fb;
+    --app-surface: #ffffff;
+    --app-sidebar: #172033;
+    --app-sidebar-muted: #9aa7bd;
+    --app-border: #dce3ef;
+    --app-text: #1e293b;
+    --app-muted: #64748b;
+    --app-primary: #2563eb;
+    --app-primary-dark: #1d4ed8;
+    --app-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    --app-sidebar-width: 280px;
+    --app-sidebar-collapsed-width: 86px;
+    --app-navbar-height: 72px;
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+* {
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    color: var(--app-text);
+    background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 34rem),
+        var(--app-bg);
+    font-family: 'Instrument Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+a {
+    text-decoration: none;
+}
+
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.app-body {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+    padding-left: var(--app-sidebar-width);
+    transition: padding-left 180ms ease;
+}
+
+.app-shell.is-sidebar-collapsed .app-body {
+    padding-left: var(--app-sidebar-collapsed-width);
+}
+
+.top-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    min-height: var(--app-navbar-height);
+}
+
+.navbar-toggle {
+    display: inline-flex;
+    width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+    border-radius: 12px;
+}
+
+.navbar-toggle-line {
+    display: block;
+    width: 18px;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+}
+
+.profile-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    border: 1px solid var(--app-border);
+    border-radius: 999px;
+    color: var(--app-text);
+}
+
+.profile-avatar {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #ffffff;
+    background: var(--app-primary);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.app-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 1030;
+    display: flex;
+    width: var(--app-sidebar-width);
+    min-height: 100vh;
+    flex-direction: column;
+    padding: 1.25rem;
+    color: #ffffff;
+    background: linear-gradient(180deg, #172033 0%, #101827 100%);
+    box-shadow: 12px 0 30px rgba(15, 23, 42, 0.18);
+    transition: width 180ms ease, transform 180ms ease;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-brand-mark {
+    display: inline-flex;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    color: #ffffff;
+    background: var(--app-primary);
+    font-weight: 800;
+}
+
+.sidebar-eyebrow {
+    color: var(--app-sidebar-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.sidebar-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.sidebar-nav {
+    display: grid;
+    gap: 0.375rem;
+    margin-top: 1.25rem;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-height: 44px;
+    padding: 0.75rem 0.875rem;
+    border-radius: 14px;
+    color: #d9e2f2;
+    font-weight: 600;
+    transition: background 160ms ease, color 160ms ease;
+}
+
+.sidebar-link:hover,
+.sidebar-link:focus,
+.sidebar-link.active {
+    color: #ffffff;
+    background: rgba(37, 99, 235, 0.26);
+}
+
+.sidebar-link-icon {
+    width: 10px;
+    height: 10px;
+    flex: 0 0 10px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.76;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.05);
+    font-size: 0.875rem;
+}
+
+.app-main {
+    width: 100%;
+    padding: 1.5rem;
+}
+
+.content-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.content-eyebrow,
+.summary-label,
+.panel-subtitle {
+    color: var(--app-muted);
+}
+
+.content-eyebrow {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.content-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+}
+
+.content-subtitle {
+    max-width: 760px;
+    color: var(--app-muted);
+    font-size: 1rem;
+}
+
+.summary-card,
+.panel-card {
+    height: 100%;
+    border: 1px solid var(--app-border);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: var(--app-shadow);
+}
+
+.summary-card {
+    padding: 1.25rem;
+}
+
+.summary-label {
+    margin-bottom: 0.625rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.summary-value {
+    margin-bottom: 0.25rem;
+    color: var(--app-primary-dark);
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.summary-note {
+    color: var(--app-muted);
+    font-size: 0.875rem;
+}
+
+.panel-card {
+    padding: 1.25rem;
+}
+
+.panel-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.panel-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-border-color: var(--app-border);
+}
+
+.table thead th {
+    color: var(--app-muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.placeholder-stack {
+    display: grid;
+    gap: 0.875rem;
+}
+
+.placeholder-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    color: var(--app-muted);
+}
+
+.placeholder-dot {
+    width: 10px;
+    height: 10px;
+    flex: 0 0 10px;
+    margin-top: 0.45rem;
+    border-radius: 50%;
+    background: var(--app-primary);
+}
+
+.app-shell.is-sidebar-collapsed .app-sidebar {
+    width: var(--app-sidebar-collapsed-width);
+}
+
+.app-shell.is-sidebar-collapsed .sidebar-title,
+.app-shell.is-sidebar-collapsed .sidebar-eyebrow,
+.app-shell.is-sidebar-collapsed .sidebar-link span:last-child,
+.app-shell.is-sidebar-collapsed .sidebar-footer {
+    display: none;
+}
+
+.app-shell.is-sidebar-collapsed .sidebar-header,
+.app-shell.is-sidebar-collapsed .sidebar-link {
+    justify-content: center;
+}
+
+.app-shell.is-sidebar-collapsed .sidebar-link {
+    padding-inline: 0;
+}
+
+@media (min-width: 768px) {
+    .app-main {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .app-body,
+    .app-shell.is-sidebar-collapsed .app-body {
+        padding-left: 0;
+    }
+
+    .app-sidebar,
+    .app-shell.is-sidebar-collapsed .app-sidebar {
+        width: min(var(--app-sidebar-width), 86vw);
+        transform: translateX(-100%);
+    }
+
+    .app-shell.is-sidebar-open .app-sidebar {
+        transform: translateX(0);
+    }
+
+    .app-shell.is-sidebar-collapsed .sidebar-title,
+    .app-shell.is-sidebar-collapsed .sidebar-eyebrow,
+    .app-shell.is-sidebar-collapsed .sidebar-link span:last-child,
+    .app-shell.is-sidebar-collapsed .sidebar-footer {
+        display: block;
+    }
+
+    .app-shell.is-sidebar-collapsed .sidebar-header,
+    .app-shell.is-sidebar-collapsed .sidebar-link {
+        justify-content: flex-start;
+    }
+
+    .app-shell.is-sidebar-collapsed .sidebar-link {
+        padding: 0.75rem 0.875rem;
+    }
+
+    .app-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1025;
+        pointer-events: none;
+        background: rgba(15, 23, 42, 0.48);
+        opacity: 0;
+        transition: opacity 180ms ease;
+    }
+
+    .app-shell.is-sidebar-open .app-overlay {
+        pointer-events: auto;
+        opacity: 1;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .navbar-brand {
+        max-width: 48vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .app-main {
+        padding: 1rem;
+    }
+
+    .content-header {
+        margin-bottom: 1rem;
+    }
+
+    .summary-card,
+    .panel-card {
+        border-radius: 18px;
+    }
 }
