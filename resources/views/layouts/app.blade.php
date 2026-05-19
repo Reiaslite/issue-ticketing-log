@@ -7,7 +7,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
-    <div class="app-shell" data-layout-shell>
+    <div class="app-shell" data-layout-shell data-requires-auth>
         <x-layout.sidebar />
 
         <div class="app-overlay" data-sidebar-overlay aria-hidden="true"></div>
