@@ -13,7 +13,6 @@ use App\Http\Resources\TicketUpdateResource;
 use App\Models\Ticket;
 use App\Services\TicketService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Str;
 
 class TicketController extends Controller
 {
@@ -65,7 +64,7 @@ class TicketController extends Controller
 
     public function show(string $ticketId): JsonResponse
     {
-        $ticket = $this->findTicket($ticketId);
+        $ticket = $this->ticketService->findActiveTicket($ticketId);
 
         if (! $ticket) {
             return $this->ticketNotFound();
@@ -79,7 +78,7 @@ class TicketController extends Controller
 
     public function update(UpdateTicketRequest $request, string $ticketId): JsonResponse
     {
-        $ticket = $this->findTicket($ticketId);
+        $ticket = $this->ticketService->findActiveTicket($ticketId);
 
         if (! $ticket) {
             return $this->ticketNotFound();
@@ -92,29 +91,19 @@ class TicketController extends Controller
 
     public function destroy(string $ticketId): JsonResponse
     {
-        $ticket = $this->findTicket($ticketId);
+        $ticket = $this->ticketService->findActiveTicket($ticketId);
 
         if (! $ticket) {
             return $this->ticketNotFound();
         }
 
-        $ticket->forceFill(['deleted_by' => request()->user()->id])->save();
-        $ticket->delete();
+        $ticket = $this->ticketService->deleteTicket($ticket, request()->user());
 
         return $this->successResponse('Ticket issue deleted successfully', [
             'id' => $ticket->id,
             'deleted_by' => $ticket->deleted_by,
             'deleted_at' => $ticket->deleted_at?->format('Y-m-d H:i:s'),
         ]);
-    }
-
-    private function findTicket(string $ticketId): ?Ticket
-    {
-        if (! Str::isUuid($ticketId)) {
-            return null;
-        }
-
-        return Ticket::query()->find($ticketId);
     }
 
     private function ticketNotFound(): JsonResponse

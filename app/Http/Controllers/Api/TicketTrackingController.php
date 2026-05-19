@@ -6,10 +6,8 @@ use App\Http\Concerns\ApiResponses;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tickets\StoreTicketTrackingRequest;
 use App\Http\Resources\TicketTrackingResource;
-use App\Models\Ticket;
 use App\Services\TicketService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Str;
 
 class TicketTrackingController extends Controller
 {
@@ -19,7 +17,7 @@ class TicketTrackingController extends Controller
 
     public function index(string $ticketId): JsonResponse
     {
-        $ticket = $this->findTicket($ticketId);
+        $ticket = $this->ticketService->findActiveTicket($ticketId);
 
         if (! $ticket) {
             return $this->ticketNotFound();
@@ -33,7 +31,7 @@ class TicketTrackingController extends Controller
 
     public function store(StoreTicketTrackingRequest $request, string $ticketId): JsonResponse
     {
-        $ticket = $this->findTicket($ticketId);
+        $ticket = $this->ticketService->findActiveTicket($ticketId);
 
         if (! $ticket) {
             return $this->ticketNotFound();
@@ -42,15 +40,6 @@ class TicketTrackingController extends Controller
         $tracking = $this->ticketService->addTracking($ticket, $request->user(), $request->validated());
 
         return $this->successResponse('Ticket tracking added successfully', new TicketTrackingResource($tracking), 201);
-    }
-
-    private function findTicket(string $ticketId): ?Ticket
-    {
-        if (! Str::isUuid($ticketId)) {
-            return null;
-        }
-
-        return Ticket::query()->find($ticketId);
     }
 
     private function ticketNotFound(): JsonResponse

@@ -13,7 +13,7 @@ class TicketStatusResource extends JsonResource
     public function toArray(Request $request): array
     {
         $latestTracking = $this->relationLoaded('latestTracking')
-            ? $this->latestTracking->first()
+            ? $this->latestTracking
             : null;
 
         return [

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ticket extends Model
@@ -74,8 +75,13 @@ class Ticket extends Model
         return $this->hasMany(TicketTracking::class)->orderBy('created_at');
     }
 
-    public function latestTracking(): HasMany
+    public function latestTracking(): HasOne
     {
-        return $this->hasMany(TicketTracking::class)->latest('created_at');
+        return $this->hasOne(TicketTracking::class)->latest('created_at');
+    }
+
+    public function isClosed(): bool
+    {
+        return in_array($this->status, self::CLOSED_STATUSES, true);
     }
 }

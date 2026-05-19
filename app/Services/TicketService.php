@@ -5,12 +5,22 @@ namespace App\Services;
 use App\Models\Ticket;
 use App\Models\TicketTracking;
 use App\Models\User;
+use App\Support\Uuid;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class TicketService
 {
+    public function findActiveTicket(string $ticketId): ?Ticket
+    {
+        if (! Uuid::isUuidV7($ticketId)) {
+            return null;
+        }
+
+        return Ticket::query()->find($ticketId);
+    }
+
     /**
      * @param  array<string, mixed>  $data
      */
@@ -64,7 +74,7 @@ class TicketService
     public function addTracking(Ticket $ticket, User $user, array $data): TicketTracking
     {
         $this->ensureTicketCanBeChanged($ticket, $user);
-        $this->ensureStatusTransitionIsAllowed($ticket, $data['status']);
+        $this->ensureStatusTransitionIsAllowed($ticket, $user, $data['status']);
 
         return DB::transaction(function () use ($ticket, $user, $data) {
             $tracking = TicketTracking::create([
@@ -91,7 +101,7 @@ class TicketService
     public function updateStatus(Ticket $ticket, User $user, array $data): Ticket
     {
         $this->ensureTicketCanBeChanged($ticket, $user);
-        $this->ensureStatusTransitionIsAllowed($ticket, $data['status']);
+        $this->ensureStatusTransitionIsAllowed($ticket, $user, $data['status']);
 
         return DB::transaction(function () use ($ticket, $user, $data) {
             TicketTracking::create([
@@ -111,6 +121,16 @@ class TicketService
         });
     }
 
+    public function deleteTicket(Ticket $ticket, User $user): Ticket
+    {
+        return DB::transaction(function () use ($ticket, $user) {
+            $ticket->forceFill(['deleted_by' => $user->id])->save();
+            $ticket->delete();
+
+            return $ticket->refresh();
+        });
+    }
+
     private function generateTicketCode(): string
     {
         $prefix = 'TCK-'.now()->format('Ymd').'-';
@@ -127,25 +147,30 @@ class TicketService
 
     private function ensureTicketCanBeChanged(Ticket $ticket, User $user): void
     {
-        if (! in_array($ticket->status, Ticket::CLOSED_STATUSES, true)) {
+        if (! $ticket->isClosed()) {
             return;
         }
 
-        if (in_array($user->role, ['admin', 'superadmin'], true)) {
+        if ($this->isSuperadmin($user)) {
             return;
         }
 
         throw new AuthorizationException('You do not have permission to access this resource');
     }
 
-    private function ensureStatusTransitionIsAllowed(Ticket $ticket, string $status): void
+    private function ensureStatusTransitionIsAllowed(Ticket $ticket, User $user, string $status): void
     {
-        if ($status !== 'done' || $ticket->status === 'solved') {
+        if ($status !== 'done' || $ticket->status === 'solved' || $this->isSuperadmin($user)) {
             return;
         }
 
         throw ValidationException::withMessages([
             'status' => ['The ticket status must be solved before it can be marked as done.'],
         ]);
+    }
+
+    private function isSuperadmin(User $user): bool
+    {
+        return $user->role === 'superadmin';
     }
 }
