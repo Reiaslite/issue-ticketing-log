@@ -7,9 +7,6 @@ use App\Http\Controllers\Api\TicketTrackingController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/login', [AuthController::class, 'login']);
-Route::get('/health', function () {
-    return response()->json(['status' => 'OK']);
-});
 
 Route::middleware('auth.token')->group(function () {
     Route::get('/tickets', [TicketController::class, 'index']);
