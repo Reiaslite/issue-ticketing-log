@@ -2,12 +2,23 @@
 
 namespace App\Http\Resources;
 
+use App\Models\TicketTracking;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * Serializes tracking rows embedded inside the ticket detail response.
+ *
+ * This variant matches the detail contract and omits handled_by.
+ *
+ * @mixin TicketTracking
+ */
 class TicketDetailTrackingResource extends JsonResource
 {
     /**
+     * Convert the tracking log into the ticket detail tracking shape.
+     *
+     * @param  Request  $request  Current HTTP request.
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array

@@ -2,12 +2,23 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * Serializes the response for status-only ticket updates.
+ *
+ * Includes latest_tracking when the latestTracking relationship is loaded.
+ *
+ * @mixin Ticket
+ */
 class TicketStatusResource extends JsonResource
 {
     /**
+     * Convert a ticket into the status update response shape.
+     *
+     * @param  Request  $request  Current HTTP request.
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array

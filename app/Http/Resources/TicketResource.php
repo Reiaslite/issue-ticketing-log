@@ -2,12 +2,24 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * Serializes the full ticket detail/create response.
+ *
+ * Tracking logs are included only when the trackingLogs relationship has been
+ * loaded by the controller.
+ *
+ * @mixin Ticket
+ */
 class TicketResource extends JsonResource
 {
     /**
+     * Convert a ticket into the full contract response shape.
+     *
+     * @param  Request  $request  Current HTTP request.
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array

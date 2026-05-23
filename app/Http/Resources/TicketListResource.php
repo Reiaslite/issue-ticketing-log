@@ -2,12 +2,24 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * Serializes a ticket row for the paginated list endpoint.
+ *
+ * Includes compact requester/staff relationship data when those relations are
+ * eager loaded by the controller.
+ *
+ * @mixin Ticket
+ */
 class TicketListResource extends JsonResource
 {
     /**
+     * Convert a ticket into the list response shape.
+     *
+     * @param  Request  $request  Current HTTP request.
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array

@@ -2,12 +2,21 @@
 
 namespace App\Http\Resources;
 
+use App\Models\TicketTracking;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * Serializes the compact latest tracking object in status update responses.
+ *
+ * @mixin TicketTracking
+ */
 class TicketTrackingStatusResource extends JsonResource
 {
     /**
+     * Convert latest tracking into the compact status response shape.
+     *
+     * @param  Request  $request  Current HTTP request.
      * @return array<string, mixed>|null
      */
     public function toArray(Request $request): ?array
