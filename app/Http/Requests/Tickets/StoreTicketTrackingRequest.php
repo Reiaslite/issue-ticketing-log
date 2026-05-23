@@ -7,9 +7,16 @@ use App\Models\Ticket;
 use App\Rules\UuidV7;
 use Illuminate\Validation\Rule;
 
+/**
+ * Validates progress/status entries added to a ticket tracking history.
+ */
 class StoreTicketTrackingRequest extends ApiFormRequest
 {
     /**
+     * Get validation rules for POST /api/tickets/{ticket_id}/trackings.
+     *
+     * Allowed status: open, assigned, in_progress, pending, solved, done, cancelled.
+     *
      * @return array<string, mixed>
      */
     public function rules(): array

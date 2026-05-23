@@ -7,9 +7,21 @@ use App\Models\Ticket;
 use App\Rules\UuidV7;
 use Illuminate\Validation\Rule;
 
+/**
+ * Validates ticket list filters and pagination query parameters.
+ *
+ * Supported filters include status, priority_level, severity_level, staff_id,
+ * user_id, search, and created date boundaries.
+ */
 class ListTicketsRequest extends ApiFormRequest
 {
     /**
+     * Get validation rules for GET /api/tickets.
+     *
+     * Allowed status: open, assigned, in_progress, pending, solved, done, cancelled.
+     * Allowed priority_level: low, medium, high, urgent.
+     * Allowed severity_level: low, medium, high, critical.
+     *
      * @return array<string, mixed>
      */
     public function rules(): array
