@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\EmployeeController;
 use App\Http\Controllers\Api\TicketController;
 use App\Http\Controllers\Api\TicketStatusController;
 use App\Http\Controllers\Api\TicketTrackingController;
@@ -29,6 +30,13 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 | deleted_by.
 */
 Route::middleware('auth.token')->group(function () {
+    // Employee endpoints.
+    Route::get('/employees', [EmployeeController::class, 'index']);
+    Route::post('/employees', [EmployeeController::class, 'store']);
+    Route::get('/employees/{employee_id}', [EmployeeController::class, 'show']);
+    Route::put('/employees/{employee_id}', [EmployeeController::class, 'update']);
+    Route::delete('/employees/{employee_id}', [EmployeeController::class, 'destroy']);
+
     // Main ticket issue endpoints.
     Route::get('/tickets', [TicketController::class, 'index']);
     Route::post('/tickets', [TicketController::class, 'store']);
