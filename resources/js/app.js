@@ -6,6 +6,9 @@ import {
     redirectToLogin,
     storeSession,
 } from './services/apiClient';
+import { initEmployeeCreate } from './employees/create';
+import { initEmployeeIndex } from './employees/index';
+import { initEmployeeDetail } from './employees/show';
 import { initTicketCreate } from './tickets/create';
 import { initTicketIndex } from './tickets/index';
 import { initTicketDetail } from './tickets/show';
@@ -209,6 +212,9 @@ initLayout();
 initAuthGuard();
 initLogin();
 loadDashboard();
+initEmployeeIndex();
+initEmployeeCreate();
+initEmployeeDetail();
 initTicketIndex();
 initTicketCreate();
 initTicketDetail();
