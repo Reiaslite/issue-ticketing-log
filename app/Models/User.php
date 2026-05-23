@@ -4,12 +4,30 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 
+/**
+ * Authenticatable user for username/password API login.
+ *
+ * Passwords are cast with Laravel's `hashed` cast so plain values assigned by
+ * seeders or forms are stored securely.
+ *
+ * @property string $id UUID v7 primary key.
+ * @property string $name
+ * @property string $username Unique login username.
+ * @property string|null $email
+ * @property string $role Example values: user, staff, superadmin.
+ * @property string $password Hashed password.
+ * @property Carbon|null $email_verified_at
+ * @property-read Collection<int, ApiAccessToken> $apiAccessTokens
+ * @property-read Collection<int, Ticket> $tickets
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -38,11 +56,21 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    /**
+     * API access tokens issued to this user.
+     *
+     * @return HasMany<ApiAccessToken, $this>
+     */
     public function apiAccessTokens(): HasMany
     {
         return $this->hasMany(ApiAccessToken::class);
     }
 
+    /**
+     * Tickets created by this user.
+     *
+     * @return HasMany<Ticket, $this>
+     */
     public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class);
