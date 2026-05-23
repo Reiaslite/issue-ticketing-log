@@ -12,14 +12,30 @@ use App\Http\Resources\TicketResource;
 use App\Http\Resources\TicketUpdateResource;
 use App\Models\Ticket;
 use App\Services\TicketService;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 
+/**
+ * Manages the main ticket issue API endpoints.
+ *
+ * Protected by Bearer token middleware in routes/api.php. System-managed
+ * fields such as user_id, ticket_code, status, created_by, updated_by, and
+ * deleted_by are always produced from backend state, never frontend input.
+ */
 class TicketController extends Controller
 {
     use ApiResponses;
 
     public function __construct(private readonly TicketService $ticketService) {}
 
+    /**
+     * Return a paginated ticket list with optional filters.
+     *
+     * Supported filters: page, limit, status, priority_level, severity_level,
+     * staff_id, user_id, search, start_date, and end_date.
+     *
+     * @param  ListTicketsRequest  $request  Validated query parameters.
+     */
     public function index(ListTicketsRequest $request): JsonResponse
     {
         $filters = $request->validated();
@@ -55,6 +71,15 @@ class TicketController extends Controller
         ]);
     }
 
+    /**
+     * Create a ticket issue and its initial tracking log.
+     *
+     * The authenticated user becomes user_id and created_by. The service also
+     * generates ticket_code, sets initial status to open, and writes the first
+     * tracking entry.
+     *
+     * @param  StoreTicketRequest  $request  Validated frontend ticket fields only.
+     */
     public function store(StoreTicketRequest $request): JsonResponse
     {
         $ticket = $this->ticketService->createTicket($request->user(), $request->validated());
@@ -62,6 +87,11 @@ class TicketController extends Controller
         return $this->successResponse('Ticket issue created successfully', new TicketResource($ticket), 201);
     }
 
+    /**
+     * Return one active ticket with its tracking logs.
+     *
+     * @param  string  $ticketId  UUID v7 ticket identifier from the route.
+     */
     public function show(string $ticketId): JsonResponse
     {
         $ticket = $this->ticketService->findActiveTicket($ticketId);
@@ -76,6 +106,17 @@ class TicketController extends Controller
         );
     }
 
+    /**
+     * Update mutable ticket issue fields.
+     *
+     * Closed tickets (`done` or `cancelled`) cannot be updated unless the
+     * authenticated user is superadmin. updated_by is always set by backend.
+     *
+     * @param  UpdateTicketRequest  $request  Validated mutable ticket fields.
+     * @param  string  $ticketId  UUID v7 ticket identifier from the route.
+     *
+     * @throws AuthorizationException
+     */
     public function update(UpdateTicketRequest $request, string $ticketId): JsonResponse
     {
         $ticket = $this->ticketService->findActiveTicket($ticketId);
@@ -89,6 +130,14 @@ class TicketController extends Controller
         return $this->successResponse('Ticket issue updated successfully', new TicketUpdateResource($ticket));
     }
 
+    /**
+     * Soft delete a ticket.
+     *
+     * The service sets deleted_by from the authenticated user and Eloquent
+     * soft deletes the row by setting deleted_at.
+     *
+     * @param  string  $ticketId  UUID v7 ticket identifier from the route.
+     */
     public function destroy(string $ticketId): JsonResponse
     {
         $ticket = $this->ticketService->findActiveTicket($ticketId);
@@ -106,6 +155,9 @@ class TicketController extends Controller
         ]);
     }
 
+    /**
+     * Build the contract-specific not-found response for ticket routes.
+     */
     private function ticketNotFound(): JsonResponse
     {
         return $this->errorResponse('Ticket not found', null, 404);
