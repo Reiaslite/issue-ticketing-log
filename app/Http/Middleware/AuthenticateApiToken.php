@@ -8,10 +8,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Authenticates protected API routes using the Authorization Bearer token.
+ *
+ * Tokens are compared by SHA-256 hash and must not be expired. On success the
+ * resolved user is attached to Laravel's auth/user resolver for controllers.
+ */
 class AuthenticateApiToken
 {
     /**
-     * @param  Closure(Request): Response  $next
+     * Validate the Bearer token and attach the authenticated user.
+     *
+     * @param  Request  $request  Incoming HTTP request.
+     * @param  Closure(Request): Response  $next  Next middleware/controller.
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -41,6 +50,9 @@ class AuthenticateApiToken
         return $next($request);
     }
 
+    /**
+     * Return the standard 401 API response for missing, invalid, or expired tokens.
+     */
     private function unauthenticated(): Response
     {
         return response()->json([
