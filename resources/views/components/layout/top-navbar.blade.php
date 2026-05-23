@@ -18,10 +18,10 @@
         </a>
 
         <div class="ms-auto d-flex align-items-center gap-3">
-            <span class="d-none d-sm-inline text-muted small">Internal IT Portal</span>
-            <button class="btn btn-light profile-button" type="button" aria-label="User profile">
-                <span class="profile-avatar" aria-hidden="true">IT</span>
-                <span class="d-none d-md-inline">Support Admin</span>
+            <span class="d-none d-sm-inline text-muted small" data-auth-role>Internal IT Portal</span>
+            <button class="btn btn-light profile-button" type="button" data-logout-button aria-label="Logout">
+                <span class="profile-avatar" aria-hidden="true" data-auth-initials>IT</span>
+                <span class="d-none d-md-inline" data-auth-name>Account</span>
             </button>
         </div>
     </div>
