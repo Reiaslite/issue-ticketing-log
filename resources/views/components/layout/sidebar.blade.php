@@ -24,6 +24,10 @@
             <span class="sidebar-link-icon" aria-hidden="true"></span>
             <span>Tracking History</span>
         </a>
+        <a class="sidebar-link {{ request()->routeIs('employees.index') ? 'active' : '' }}" href="{{ route('employees.index') }}">
+            <span class="sidebar-link-icon" aria-hidden="true"></span>
+            <span>Employees List</span>
+        </a>
     </nav>
 
     <div class="sidebar-footer">
