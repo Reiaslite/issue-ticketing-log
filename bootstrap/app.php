@@ -23,6 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        /*
+         * API exception renderers keep framework exceptions aligned with the
+         * ISSUE_API_CONTRACT.md error envelope. Web routes keep Laravel's
+         * default rendering behavior.
+         */
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             if (! $request->is('api/*')) {
                 return null;
