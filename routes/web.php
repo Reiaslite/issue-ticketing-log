@@ -10,6 +10,9 @@ Route::view('/', 'welcome')->name('dashboard');
  */
 Route::view('/employees', 'pages.employees.index')->name('employees.index');
 Route::view('/employees/create', 'pages.employees.create')->name('employees.create');
+Route::get('/employees/{employee}', function (string $employee) {
+    return view('pages.employees.show', ['employeeId' => $employee]);
+})->name('employees.show');
 
 /**
  * Ticket routes
