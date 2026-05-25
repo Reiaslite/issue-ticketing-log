@@ -16,7 +16,7 @@ class HealthCheckTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'success' => true,
-                'message' => 'API is healthy',
+                'message' => 'Healthy',
             ])
             ->assertJsonStructure([
                 'success',
