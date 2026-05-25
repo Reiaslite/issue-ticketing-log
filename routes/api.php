@@ -22,6 +22,19 @@ use Illuminate\Support\Facades\Route;
 // Public authentication endpoint. Accepts username/password and returns a Bearer token.
 Route::post('/auth/login', [AuthController::class, 'login']);
 
+// Public health check endpoint.
+Route::get('/health', function () {
+    return response()->json([
+        'success' => true,
+        'message' => 'Healthy',
+        'data' => [
+            'timestamp' => now()->format('Y-m-d H:i:s'),
+            'app' => config('app.name'),
+            'environment' => config('app.env'),
+        ],
+    ]);
+});
+
 /*
 | Protected ticket endpoints.
 |
